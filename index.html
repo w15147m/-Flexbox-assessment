@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flexbox Assessment - Direction, Justify-Content, Align-Items</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .instructions {
+            background: rgba(255,255,255,0.95);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .challenge {
+            background: rgba(255,255,255,0.95);
+            margin: 20px 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .challenge:hover {
+            transform: translateY(-5px);
+        }
+
+        .challenge-header {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 15px 25px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .challenge-content {
+            padding: 25px;
+        }
+
+        .target-layout {
+            background: #f8f9fa;
+            border: 2px dashed #6c757d;
+            margin: 15px 0;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: #6c757d;
+            font-weight: bold;
+        }
+
+        .practice-area {
+            background: #e9ecef;
+            border: 2px solid #dee2e6;
+            margin: 15px 0;
+            padding: 20px;
+            border-radius: 10px;
+            min-height: 200px;
+        }
+
+        .flex-container {
+            background: rgba(52, 152, 219, 0.2);
+            border: 2px solid #3498db;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            min-height: 150px;
+            
+            /* Default flex properties */
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: stretch;
+        }
+
+        .flex-item {
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            color: #333;
+            padding: 15px 20px;
+            margin: 5px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 60px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 1px solid #dee2e6;
+        }
+
+        .control-group {
+            margin: 15px 0;
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #495057;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 5px;
+            font-size: 16px;
+            background: white;
+            transition: border-color 0.3s ease;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .solution {
+            background: rgba(46, 204, 113, 0.1);
+            border: 2px solid #2ecc71;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .solution.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        button {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        .reset-btn {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+        }
+
+        .score {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.95);
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            font-weight: bold;
+            color: #2c3e50;
+            z-index: 1000;
+        }
+
+        .correct {
+            border-color: #2ecc71 !important;
+            background: rgba(46, 204, 113, 0.1) !important;
+        }
+
+        .hint {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid #ffc107;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            color: #856404;
+            font-style: italic;
+        }
+
+        .difficulty {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .easy {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .hard {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .expert {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.2);
+            border-radius: 25px;
+            padding: 3px;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            border-radius: 22px;
+            height: 20px;
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .visual-demo {
+            background: #fff;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .demo-container {
+            background: rgba(52, 152, 219, 0.1);
+            border: 1px dashed #3498db;
+            min-height: 80px;
+            display: flex;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .demo-item {
+            background: #3498db;
+            color: white;
+            padding: 10px;
+            margin: 2px;
+            border-radius: 4px;
+            font-size: 12px;
+            min-width: 30px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="score">
+        <div>Score: <span id="score">0</span>/12</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+    </div>
+
+    <div class="header">
+        <h1>🎯 Flexbox Mastery Challenge</h1>
+        <p>Master flex-direction, justify-content, and align-items</p>
+    </div>
+
+    <div class="instructions">
+        <h2>📋 Instructions</h2>
+        <p><strong>Your Mission:</strong> Use the dropdown controls to match the target layout shown in each challenge. You'll practice:</p>
+        <ul style="margin: 15px 0; padding-left: 20px;">
+            <li><strong>flex-direction:</strong> Controls the main axis (row, column, row-reverse, column-reverse)</li>
+            <li><strong>justify-content:</strong> Aligns items along the main axis</li>
+            <li><strong>align-items:</strong> Aligns items along the cross axis</li>
+        </ul>
+        <p><em>💡 Watch how the flex items move as you change the properties!</em></p>
+    </div>
+
+    <!-- Challenge 1 -->
+    <div class="challenge">
+        <div class="challenge-header">
+            Challenge 1: Center Everything 
+            <span class="difficulty easy">EASY</span>
+        </div>
+        <div class="challenge-content">
+            <div class="target-layout">
+                🎯 TARGET: Items centered both horizontally and vertically
+            </div>
+            
+            <div class="practice-area">
+                <div class="flex-container" id="container1">
+                    <div class="flex-item">A</div>
+                    <div class="flex-item">B</div>
+                    <div class="flex-item">C</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>flex-direction:</label>
+                    <select id="direction1" onchange="updateFlex(1)">
+                        <option value="row">row</option>
+                        <option value="row-reverse">row-reverse</option>
+                        <option value="column">column</option>
+                        <option value="column-reverse">column-reverse</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>justify-content:</label>
+                    <select id="justify1" onchange="updateFlex(1)">
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="space-between">space-between</option>
+                        <option value="space-around">space-around</option>
+                        <option value="space-evenly">space-evenly</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>align-items:</label>
+                    <select id="align1" onchange="updateFlex(1)">
+                        <option value="stretch">stretch</option>
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="baseline">baseline</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="solution" id="solution1">
+                ✅ <strong>Correct Solution:</strong><br>
+                flex-direction: row<br>
+                justify-content: center<br>
+                align-items: center
+            </div>
+            <button onclick="showSolution(1)">Show Solution</button>
+            <button class="reset-btn" onclick="resetChallenge(1)">Reset</button>
+            <div class="hint">💡 Think: What puts items in the center of both axes?</div>
+        </div>
+    </div>
+
+    <!-- Challenge 2 -->
+    <div class="challenge">
+        <div class="challenge-header">
+            Challenge 2: Column Layout with Space
+            <span class="difficulty easy">EASY</span>
+        </div>
+        <div class="challenge-content">
+            <div class="target-layout">
+                🎯 TARGET: Vertical column with equal space between items, centered horizontally
+            </div>
+            
+            <div class="practice-area">
+                <div class="flex-container" id="container2">
+                    <div class="flex-item">1</div>
+                    <div class="flex-item">2</div>
+                    <div class="flex-item">3</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>flex-direction:</label>
+                    <select id="direction2" onchange="updateFlex(2)">
+                        <option value="row">row</option>
+                        <option value="row-reverse">row-reverse</option>
+                        <option value="column">column</option>
+                        <option value="column-reverse">column-reverse</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>justify-content:</label>
+                    <select id="justify2" onchange="updateFlex(2)">
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="space-between">space-between</option>
+                        <option value="space-around">space-around</option>
+                        <option value="space-evenly">space-evenly</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>align-items:</label>
+                    <select id="align2" onchange="updateFlex(2)">
+                        <option value="stretch">stretch</option>
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="baseline">baseline</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="solution" id="solution2">
+                ✅ <strong>Correct Solution:</strong><br>
+                flex-direction: column<br>
+                justify-content: space-between<br>
+                align-items: center
+            </div>
+            <button onclick="showSolution(2)">Show Solution</button>
+            <button class="reset-btn" onclick="resetChallenge(2)">Reset</button>
+            <div class="hint">💡 Column changes the main axis to vertical!</div>
+        </div>
+    </div>
+
+    <!-- Challenge 3 -->
+    <div class="challenge">
+        <div class="challenge-header">
+            Challenge 3: Reverse Row with End Alignment
+            <span class="difficulty medium">MEDIUM</span>
+        </div>
+        <div class="challenge-content">
+            <div class="target-layout">
+                🎯 TARGET: Items in reverse order (C, B, A), pushed to the right, aligned to bottom
+            </div>
+            
+            <div class="practice-area">
+                <div class="flex-container" id="container3">
+                    <div class="flex-item">A</div>
+                    <div class="flex-item">B</div>
+                    <div class="flex-item">C</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>flex-direction:</label>
+                    <select id="direction3" onchange="updateFlex(3)">
+                        <option value="row">row</option>
+                        <option value="row-reverse">row-reverse</option>
+                        <option value="column">column</option>
+                        <option value="column-reverse">column-reverse</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>justify-content:</label>
+                    <select id="justify3" onchange="updateFlex(3)">
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="space-between">space-between</option>
+                        <option value="space-around">space-around</option>
+                        <option value="space-evenly">space-evenly</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>align-items:</label>
+                    <select id="align3" onchange="updateFlex(3)">
+                        <option value="stretch">stretch</option>
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="baseline">baseline</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="solution" id="solution3">
+                ✅ <strong>Correct Solution:</strong><br>
+                flex-direction: row-reverse<br>
+                justify-content: flex-end<br>
+                align-items: flex-end
+            </div>
+            <button onclick="showSolution(3)">Show Solution</button>
+            <button class="reset-btn" onclick="resetChallenge(3)">Reset</button>
+            <div class="hint">💡 row-reverse flips the items, then think about which end to justify to!</div>
+        </div>
+    </div>
+
+    <!-- Challenge 4 -->
+    <div class="challenge">
+        <div class="challenge-header">
+            Challenge 4: Space Around in Column
+            <span class="difficulty medium">MEDIUM</span>
+        </div>
+        <div class="challenge-content">
+            <div class="target-layout">
+                🎯 TARGET: Vertical column with space around each item, items stretched to full width
+            </div>
+            
+            <div class="practice-area">
+                <div class="flex-container" id="container4">
+                    <div class="flex-item">X</div>
+                    <div class="flex-item">Y</div>
+                    <div class="flex-item">Z</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>flex-direction:</label>
+                    <select id="direction4" onchange="updateFlex(4)">
+                        <option value="row">row</option>
+                        <option value="row-reverse">row-reverse</option>
+                        <option value="column">column</option>
+                        <option value="column-reverse">column-reverse</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>justify-content:</label>
+                    <select id="justify4" onchange="updateFlex(4)">
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="space-between">space-between</option>
+                        <option value="space-around">space-around</option>
+                        <option value="space-evenly">space-evenly</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>align-items:</label>
+                    <select id="align4" onchange="updateFlex(4)">
+                        <option value="stretch">stretch</option>
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="baseline">baseline</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="solution" id="solution4">
+                ✅ <strong>Correct Solution:</strong><br>
+                flex-direction: column<br>
+                justify-content: space-around<br>
+                align-items: stretch
+            </div>
+            <button onclick="showSolution(4)">Show Solution</button>
+            <button class="reset-btn" onclick="resetChallenge(4)">Reset</button>
+            <div class="hint">💡 stretch makes items fill the cross-axis completely!</div>
+        </div>
+    </div>
+
+    <!-- Challenge 5 -->
+    <div class="challenge">
+        <div class="challenge-header">
+            Challenge 5: Evenly Spaced Row
+            <span class="difficulty medium">MEDIUM</span>
+        </div>
+        <div class="challenge-content">
+            <div class="target-layout">
+                🎯 TARGET: Horizontal row with perfectly even spacing, items aligned to top
+            </div>
+            
+            <div class="practice-area">
+                <div class="flex-container" id="container5">
+                    <div class="flex-item">🌟</div>
+                    <div class="flex-item">⭐</div>
+                    <div class="flex-item">✨</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>flex-direction:</label>
+                    <select id="direction5" onchange="updateFlex(5)">
+                        <option value="row">row</option>
+                        <option value="row-reverse">row-reverse</option>
+                        <option value="column">column</option>
+                        <option value="column-reverse">column-reverse</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>justify-content:</label>
+                    <select id="justify5" onchange="updateFlex(5)">
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="space-between">space-between</option>
+                        <option value="space-around">space-around</option>
+                        <option value="space-evenly">space-evenly</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>align-items:</label>
+                    <select id="align5" onchange="updateFlex(5)">
+                        <option value="stretch">stretch</option>
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="baseline">baseline</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="solution" id="solution5">
+                ✅ <strong>Correct Solution:</strong><br>
+                flex-direction: row<br>
+                justify-content: space-evenly<br>
+                align-items: flex-start
+            </div>
+            <button onclick="showSolution(5)">Show Solution</button>
+            <button class="reset-btn" onclick="resetChallenge(5)">Reset</button>
+            <div class="hint">💡 space-evenly gives equal space everywhere, even at the edges!</div>
+        </div>
+    </div>
+
+    <!-- Challenge 6 -->
+    <div class="challenge">
+        <div class="challenge-header">
+            Challenge 6: Column Reverse Bottom
+            <span class="difficulty hard">HARD</span>
+        </div>
+        <div class="challenge-content">
+            <div class="target-layout">
+                🎯 TARGET: Items stacked vertically in reverse order (C, B, A), pushed to bottom, centered horizontally
+            </div>
+            
+            <div class="practice-area">
+                <div class="flex-container" id="container6">
+                    <div class="flex-item">A</div>
+                    <div class="flex-item">B</div>
+                    <div class="flex-item">C</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>flex-direction:</label>
+                    <select id="direction6" onchange="updateFlex(6)">
+                        <option value="row">row</option>
+                        <option value="row-reverse">row-reverse</option>
+                        <option value="column">column</option>
+                        <option value="column-reverse">column-reverse</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>justify-content:</label>
+                    <select id="justify6" onchange="updateFlex(6)">
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="space-between">space-between</option>
+                        <option value="space-around">space-around</option>
+                        <option value="space-evenly">space-evenly</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>align-items:</label>
+                    <select id="align6" onchange="updateFlex(6)">
+                        <option value="stretch">stretch</option>
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="baseline">baseline</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="solution" id="solution6">
+                ✅ <strong>Correct Solution:</strong><br>
+                flex-direction: column-reverse<br>
+                justify-content: flex-end<br>
+                align-items: center
+            </div>
+            <button onclick="showSolution(6)">Show Solution</button>
+            <button class="reset-btn" onclick="resetChallenge(6)">Reset</button>
+            <div class="hint">💡 Remember: in column-reverse, justify-content controls vertical positioning!</div>
+        </div>
+    </div>
+
+    <!-- Challenge 7 -->
+    <div class="challenge">
+        <div class="challenge-header">
+            Challenge 7: Space Between with Bottom Alignment
+            <span class="difficulty hard">HARD</span>
+        </div>
+        <div class="challenge-content">
+            <div class="target-layout">
+                🎯 TARGET: Items spread across width with space only between them, all aligned to bottom edge
+            </div>
+            
+            <div class="practice-area">
+                <div class="flex-container" id="container7">
+                    <div class="flex-item">🏠</div>
+                    <div class="flex-item">🌳</div>
+                    <div class="flex-item">🚗</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>flex-direction:</label>
+                    <select id="direction7" onchange="updateFlex(7)">
+                        <option value="row">row</option>
+                        <option value="row-reverse">row-reverse</option>
+                        <option value="column">column</option>
+                        <option value="column-reverse">column-reverse</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>justify-content:</label>
+                    <select id="justify7" onchange="updateFlex(7)">
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="space-between">space-between</option>
+                        <option value="space-around">space-around</option>
+                        <option value="space-evenly">space-evenly</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>align-items:</label>
+                    <select id="align7" onchange="updateFlex(7)">
+                        <option value="stretch">stretch</option>
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="baseline">baseline</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="solution" id="solution7">
+                ✅ <strong>Correct Solution:</strong><br>
+                flex-direction: row<br>
+                justify-content: space-between<br>
+                align-items: flex-end
+            </div>
+            <button onclick="showSolution(7)">Show Solution</button>
+            <button class="reset-btn" onclick="resetChallenge(7)">Reset</button>
+            <div class="hint">💡 space-between puts no space at the edges, only between items!</div>
+        </div>
+    </div>
+
+    <!-- Challenge 8 -->
+    <div class="challenge">
+        <div class="challenge-header">
+            Challenge 8: Vertical Navigation Menu
+            <span class="difficulty hard">HARD</span>
+        </div>
+        <div class="challenge-content">
+            <div class="target-layout">
+                🎯 TARGET: Create a vertical menu - items in column, centered horizontally, with space around each item
+            </div>
+            
+            <div class="practice-area">
+                <div class="flex-container" id="container8">
+                    <div class="flex-item">Home</div>
+                    <div class="flex-item">About</div>
+                    <div class="flex-item">Contact</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>flex-direction:</label>
+                    <select id="direction8" onchange="updateFlex(8)">
+                        <option value="row">row</option>
+                        <option value="row-reverse">row-reverse</option>
+                        <option value="column">column</option>
+                        <option value="column-reverse">column-reverse</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>justify-content:</label>
+                    <select id="justify8" onchange="updateFlex(8)">
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="space-between">space-between</option>
+                        <option value="space-around">space-around</option>
+                        <option value="space-evenly">space-evenly</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>align-items:</label>
+                    <select id="align8" onchange="updateFlex(8)">
+                        <option value="stretch">stretch</option>
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="baseline">baseline</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="solution" id="solution8">
+                ✅ <strong>Correct Solution:</strong><br>
+                flex-direction: column<br>
+                justify-content: space-around<br>
+                align-items: center
+            </div>
+            <button onclick="showSolution(8)">Show Solution</button>
+            <button class="reset-btn" onclick="resetChallenge(8)">Reset</button>
+            <div class="hint">💡 Think about how to make a nice vertical navigation menu!</div>
+        </div>
+    </div>
+
+    <!-- Challenge 9 - NEW -->
+    <div class="challenge">
+        <div class="challenge-header">
+            Challenge 9: Complex Corner Layout
+            <span class="difficulty expert">EXPERT</span>
+        </div>
+        <div class="challenge-content">
+            <div class="target-layout">
+                🎯 TARGET: Items in reverse column order (C, B, A), positioned at bottom-right corner
+            </div>
+            
+            <div class="practice-area">
+                <div class="flex-container" id="container9">
+                    <div class="flex-item">A</div>
+                    <div class="flex-item">B</div>
+                    <div class="flex-item">C</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>flex-direction:</label>
+                    <select id="direction9" onchange="updateFlex(9)">
+                        <option value="row">row</option>
+                        <option value="row-reverse">row-reverse</option>
+                        <option value="column">column</option>
+                        <option value="column-reverse">column-reverse</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>justify-content:</label>
+                    <select id="justify9" onchange="updateFlex(9)">
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="space-between">space-between</option>
+                        <option value="space-around">space-around</option>
+                        <option value="space-evenly">space-evenly</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>align-items:</label>
+                    <select id="align9" onchange="updateFlex(9)">
+                        <option value="stretch">stretch</option>
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="baseline">baseline</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="solution" id="solution9">
+                ✅ <strong>Correct Solution:</strong><br>
+                flex-direction: column-reverse<br>
+                justify-content: flex-end<br>
+                align-items: flex-end
+            </div>
+            <button onclick="showSolution(9)">Show Solution</button>
+            <button class="reset-btn" onclick="resetChallenge(9)">Reset</button>
+            <div class="hint">💡 Think about both reversing AND positioning at the end of both axes!</div>
+        </div>
+    </div>
+
+    <!-- Challenge 10 - NEW -->
+    <div class="challenge">
+        <div class="challenge-header">
+            Challenge 10: Equal Distribution Challenge
+            <span class="difficulty expert">EXPERT</span>
+        </div>
+        <div class="challenge-content">
+            <div class="target-layout">
+                🎯 TARGET: Horizontal reverse row (C, B, A), with equal space distribution including edges, centered vertically
+            </div>
+            
+            <div class="practice-area">
+                <div class="flex-container" id="container10">
+                    <div class="flex-item">A</div>
+                    <div class="flex-item">B</div>
+                    <div class="flex-item">C</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>flex-direction:</label>
+                    <select id="direction10" onchange="updateFlex(10)">
+                        <option value="row">row</option>
+                        <option value="row-reverse">row-reverse</option>
+                        <option value="column">column</option>
+                        <option value="column-reverse">column-reverse</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>justify-content:</label>
+                    <select id="justify10" onchange="updateFlex(10)">
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="space-between">space-between</option>
+                        <option value="space-around">space-around</option>
+                        <option value="space-evenly">space-evenly</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>align-items:</label>
+                    <select id="align10" onchange="updateFlex(10)">
+                        <option value="stretch">stretch</option>
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="baseline">baseline</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="solution" id="solution10">
+                ✅ <strong>Correct Solution:</strong><br>
+                flex-direction: row-reverse<br>
+                justify-content: space-evenly<br>
+                align-items: center
+            </div>
+            <button onclick="showSolution(10)">Show Solution</button>
+            <button class="reset-btn" onclick="resetChallenge(10)">Reset</button>
+            <div class="hint">💡 Combine reversal with even spacing - think about what space-evenly does!</div>
+        </div>
+    </div>
+
+    <!-- Challenge 11 - NEW -->
+    <div class="challenge">
+        <div class="challenge-header">
+            Challenge 11: Stretched Column with End Spacing
+            <span class="difficulty expert">EXPERT</span>
+        </div>
+        <div class="challenge-content">
+            <div class="target-layout">
+                🎯 TARGET: Normal column order, items pushed to bottom, all items stretched to full width
+            </div>
+            
+            <div class="practice-area">
+                <div class="flex-container" id="container11">
+                    <div class="flex-item">Top</div>
+                    <div class="flex-item">Mid</div>
+                    <div class="flex-item">Bot</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>flex-direction:</label>
+                    <select id="direction11" onchange="updateFlex(11)">
+                        <option value="row">row</option>
+                        <option value="row-reverse">row-reverse</option>
+                        <option value="column">column</option>
+                        <option value="column-reverse">column-reverse</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>justify-content:</label>
+                    <select id="justify11" onchange="updateFlex(11)">
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="space-between">space-between</option>
+                        <option value="space-around">space-around</option>
+                        <option value="space-evenly">space-evenly</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>align-items:</label>
+                    <select id="align11" onchange="updateFlex(11)">
+                        <option value="stretch">stretch</option>
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="baseline">baseline</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="solution" id="solution11">
+                ✅ <strong>Correct Solution:</strong><br>
+                flex-direction: column<br>
+                justify-content: flex-end<br>
+                align-items: stretch
+            </div>
+            <button onclick="showSolution(11)">Show Solution</button>
+            <button class="reset-btn" onclick="resetChallenge(11)">Reset</button>
+            <div class="hint">💡 Column direction + end positioning + full width stretching!</div>
+        </div>
+    </div>
+
+    <!-- Challenge 12 - NEW -->
+    <div class="challenge">
+        <div class="challenge-header">
+            Challenge 12: Ultimate Flexbox Challenge
+            <span class="difficulty expert">EXPERT</span>
+        </div>
+        <div class="challenge-content">
+            <div class="target-layout">
+                🎯 TARGET: Row reverse order (C, B, A), items spaced only between (no edge space), aligned to top
+            </div>
+            
+            <div class="practice-area">
+                <div class="flex-container" id="container12">
+                    <div class="flex-item">A</div>
+                    <div class="flex-item">B</div>
+                    <div class="flex-item">C</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>flex-direction:</label>
+                    <select id="direction12" onchange="updateFlex(12)">
+                        <option value="row">row</option>
+                        <option value="row-reverse">row-reverse</option>
+                        <option value="column">column</option>
+                        <option value="column-reverse">column-reverse</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>justify-content:</label>
+                    <select id="justify12" onchange="updateFlex(12)">
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="space-between">space-between</option>
+                        <option value="space-around">space-around</option>
+                        <option value="space-evenly">space-evenly</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>align-items:</label>
+                    <select id="align12" onchange="updateFlex(12)">
+                        <option value="stretch">stretch</option>
+                        <option value="flex-start">flex-start</option>
+                        <option value="flex-end">flex-end</option>
+                        <option value="center">center</option>
+                        <option value="baseline">baseline</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="solution" id="solution12">
+                ✅ <strong>Correct Solution:</strong><br>
+                flex-direction: row-reverse<br>
+                justify-content: space-between<br>
+                align-items: flex-start
+            </div>
+            <button onclick="showSolution(12)">Show Solution</button>
+            <button class="reset-btn" onclick="resetChallenge(12)">Reset</button>
+            <div class="hint">💡 Master challenge: Reverse + space-between + top alignment!</div>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin: 40px 0; color: white;">
+        <h2>🎉 Congratulations!</h2>
+        <p>You've completed all 12 Flexbox challenges. You're now a Flexbox master!</p>
+        <button onclick="resetAllChallenges()" style="margin-top: 20px;">🔄 Reset All Challenges</button>
+    </div>
+
+    <script>
+        let score = 0;
+        let correctAnswers = {
+            1: {direction: 'row', justify: 'center', align: 'center'},
+            2: {direction: 'column', justify: 'space-between', align: 'center'},
+            3: {direction: 'row-reverse', justify: 'flex-end', align: 'flex-end'},
+            4: {direction: 'column', justify: 'space-around', align: 'stretch'},
+            5: {direction: 'row', justify: 'space-evenly', align: 'flex-start'},
+            6: {direction: 'column-reverse', justify: 'flex-end', align: 'center'},
+            7: {direction: 'row', justify: 'space-between', align: 'flex-end'},
+            8: {direction: 'column', justify: 'space-around', align: 'center'},
+            9: {direction: 'column-reverse', justify: 'flex-end', align: 'flex-end'},
+            10: {direction: 'row-reverse', justify: 'space-evenly', align: 'center'},
+            11: {direction: 'column', justify: 'flex-end', align: 'stretch'},
+            12: {direction: 'row-reverse', justify: 'space-between', align: 'flex-start'}
+        };
+
+        let challengeStates = {};
+
+        // Initialize all challenges
+        for (let i = 1; i <= 12; i++) {
+            challengeStates[i] = {
+                direction: 'row',
+                justify: 'flex-start', 
+                align: 'stretch',
+                solved: false
+            };
+        }
+
+        function updateFlex(challengeNum) {
+            const container = document.getElementById(`container${challengeNum}`);
+            const directionSelect = document.getElementById(`direction${challengeNum}`);
+            const justifySelect = document.getElementById(`justify${challengeNum}`);
+            const alignSelect = document.getElementById(`align${challengeNum}`);
+
+            const direction = directionSelect.value;
+            const justify = justifySelect.value;
+            const align = alignSelect.value;
+
+            // Update container styles
+            container.style.flexDirection = direction;
+            container.style.justifyContent = justify;
+            container.style.alignItems = align;
+
+            // Update challenge state
+            challengeStates[challengeNum] = {
+                direction: direction,
+                justify: justify,
+                align: align,
+                solved: challengeStates[challengeNum].solved
+            };
+
+            // Check if correct
+            checkAnswer(challengeNum);
+        }
+
+        function checkAnswer(challengeNum) {
+            const current = challengeStates[challengeNum];
+            const correct = correctAnswers[challengeNum];
+            const container = document.getElementById(`container${challengeNum}`);
+            
+            if (current.direction === correct.direction && 
+                current.justify === correct.justify && 
+                current.align === correct.align) {
+                
+                if (!current.solved) {
+                    current.solved = true;
+                    score++;
+                    updateScore();
+                    container.classList.add('correct');
+                    
+                    // Celebration effect
+                    setTimeout(() => {
+                        alert(`🎉 Challenge ${challengeNum} completed! Great job!`);
+                    }, 100);
+                }
+            } else {
+                if (current.solved) {
+                    current.solved = false;
+                    score--;
+                    updateScore();
+                }
+                container.classList.remove('correct');
+            }
+        }
+
+        function showSolution(challengeNum) {
+            const solution = document.getElementById(`solution${challengeNum}`);
+            const correct = correctAnswers[challengeNum];
+            
+            // Show solution
+            solution.classList.add('show');
+            
+            // Apply correct values to dropdowns
+            document.getElementById(`direction${challengeNum}`).value = correct.direction;
+            document.getElementById(`justify${challengeNum}`).value = correct.justify;
+            document.getElementById(`align${challengeNum}`).value = correct.align;
+            
+            // Update the flex container
+            updateFlex(challengeNum);
+            
+            // Hide solution after 5 seconds
+            setTimeout(() => {
+                solution.classList.remove('show');
+            }, 5000);
+        }
+
+        function resetChallenge(challengeNum) {
+            // Reset dropdowns to defaults
+            document.getElementById(`direction${challengeNum}`).value = 'row';
+            document.getElementById(`justify${challengeNum}`).value = 'flex-start';
+            document.getElementById(`align${challengeNum}`).value = 'stretch';
+            
+            // Hide solution
+            document.getElementById(`solution${challengeNum}`).classList.remove('show');
+            
+            // Update flex container
+            updateFlex(challengeNum);
+        }
+
+        function resetAllChallenges() {
+            for (let i = 1; i <= 12; i++) {
+                resetChallenge(i);
+                challengeStates[i].solved = false;
+                document.getElementById(`container${i}`).classList.remove('correct');
+            }
+            score = 0;
+            updateScore();
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = score;
+            const progress = document.getElementById('progress');
+            const percentage = (score / 12) * 100;
+            progress.style.width = percentage + '%';
+            progress.textContent = percentage > 0 ? Math.round(percentage) + '%' : '';
+            
+            // Color changes based on progress
+            if (percentage === 100) {
+                progress.style.background = 'linear-gradient(45deg, #f39c12, #e67e22)';
+                progress.textContent = '🏆 MASTER!';
+            } else if (percentage >= 75) {
+                progress.style.background = 'linear-gradient(45deg, #2ecc71, #27ae60)';
+            } else if (percentage >= 50) {
+                progress.style.background = 'linear-gradient(45deg, #3498db, #2980b9)';
+            } else {
+                progress.style.background = 'linear-gradient(45deg, #e74c3c, #c0392b)';
+            }
+        }
+
+        // Initialize score display
+        updateScore();
+
+        // Add some interactive feedback
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects to flex items
+            const flexItems = document.querySelectorAll('.flex-item');
+            flexItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05)';
+                    this.style.transition = 'transform 0.2s ease';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
